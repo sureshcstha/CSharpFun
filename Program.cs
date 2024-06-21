@@ -32,7 +32,7 @@ namespace CSharpFun
 
             Computer myComputer = new Computer()
             {
-                Motherboard = "R690",
+                Motherboard = "Z690",
                 HasWifi = true,
                 HasLTE = false,
                 ReleaseDate = DateTime.Now,
@@ -40,8 +40,7 @@ namespace CSharpFun
                 VideoCard = "RTX 2060"
             };
 
-            entityFramework.Add(myComputer);
-            entityFramework.SaveChanges();
+
 
             string sql = @"INSERT INTO TutorialAppSchema.Computer (
                 Motherboard,
@@ -58,60 +57,18 @@ namespace CSharpFun
                     + "','" + myComputer.VideoCard
             + "')";
 
-            // Console.WriteLine(sql);
+            File.WriteAllText("log.txt", "\n" + sql + "\n");
 
-            // int result = dapper.ExecuteSqlWithRowCount(sql);
-            bool result = dapper.ExecuteSql(sql);
+            using StreamWriter openFile = new("log.txt", append: true);
 
-            // Console.WriteLine(result);
+            openFile.WriteLine("\n" + sql + "\n");
 
+            openFile.Close();
 
-            string sqlSelect = @"
-            SELECT 
-                Computer.ComputerId, 
-                Computer.Motherboard, 
-                Computer.HasWifi, 
-                Computer.HasLTE, 
-                Computer.ReleaseDate, 
-                Computer.Price, 
-                Computer.VideoCard
-            FROM TutorialAppSchema.Computer";
+            string fileText = File.ReadAllText("log.txt");
 
-            IEnumerable<Computer> computers = dapper.LoadData<Computer>(sqlSelect);
+            Console.WriteLine(fileText);
 
-
-            Console.WriteLine("Dapper");
-            foreach (Computer computer in computers) 
-            {
-                Console.WriteLine("'" + computer.ComputerId
-                    + "','" + computer.Motherboard
-                    + "','" + computer.HasWifi
-                    + "','" + computer.HasLTE
-                    + "','" + computer.ReleaseDate
-                    + "','" + computer.Price
-                    + "','" + computer.VideoCard
-                    + "'");
-            }
-
-
-            IEnumerable<Computer>? computersEf = entityFramework.Computer?.ToList<Computer>();
-
-            Console.WriteLine("Entity Framework");
-            if (computersEf != null)
-            {
-
-                foreach (Computer computer in computersEf)
-                {
-                    Console.WriteLine("'" + computer.ComputerId
-                        + "','" + computer.Motherboard
-                        + "','" + computer.HasWifi
-                        + "','" + computer.HasLTE
-                        + "','" + computer.ReleaseDate
-                        + "','" + computer.Price
-                        + "','" + computer.VideoCard
-                        + "'");
-                }
-            }
         }
     }
 }
