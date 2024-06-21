@@ -1,17 +1,24 @@
 ﻿using CSharpFun.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace CSharpFun.Data
 {
     public class DataContextEF : DbContext
     {
+        private IConfiguration _config;
+        public DataContextEF(IConfiguration config)
+        {
+            _config = config;
+        }
+
         public DbSet<Computer>? Computer { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
             if (!options.IsConfigured)
             {
-                options.UseSqlServer("Server=(localdb)\\local;Database=DotNetCourseDatabase;TrustServerCertificate=true;Trusted_Connection=true;",
+                options.UseSqlServer(_config.GetConnectionString("DefaultConnection"),
                     options => options.EnableRetryOnFailure());
             }
         }

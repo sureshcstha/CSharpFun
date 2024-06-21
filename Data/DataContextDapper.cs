@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using System.Data;
 
 
@@ -7,7 +8,15 @@ namespace CSharpFun.Data
 {
     public class DataContextDapper
     {
-        private string _connectionString = "Server=(localdb)\\local;Database=DotNetCourseDatabase;TrustServerCertificate=true;Trusted_Connection=true;";
+        //private IConfiguration _config;
+        private string _connectionString;
+        public DataContextDapper(IConfiguration config)
+        {
+            //_config = config;
+            _connectionString = config.GetConnectionString("DefaultConnection");
+        }
+
+        //private string _connectionString = "Server=(localdb)\\local;Database=DotNetCourseDatabase;TrustServerCertificate=true;Trusted_Connection=true;";
 
         public IEnumerable<T> LoadData<T>(string sql)
         {
